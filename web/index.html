@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reconciliation Break Triage</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --panel: #171c24;
+      --panel-2: #1e242e;
+      --border: #2a313c;
+      --text: #e6e9ee;
+      --muted: #9aa4b2;
+      --accent: #4f9cf9;
+      --good: #3fb950;
+      --warn: #d29922;
+      --bad: #f85149;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      font-size: 14px;
+    }
+    header {
+      padding: 18px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    header h1 { font-size: 17px; margin: 0; font-weight: 600; }
+    header .sub { color: var(--muted); font-size: 12px; margin-top: 3px; }
+    .controls { display: flex; align-items: center; gap: 10px; }
+    button {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 8px 14px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    button.secondary { background: var(--panel-2); color: var(--text); border: 1px solid var(--border); }
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      border: 1px solid var(--border);
+      background: var(--panel-2);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); }
+    .dot.good { background: var(--good); }
+    .dot.bad { background: var(--bad); }
+    .layout { display: grid; grid-template-columns: 1.4fr 1fr; gap: 0; height: calc(100vh - 67px); }
+    .list, .detail { overflow-y: auto; }
+    .detail { border-left: 1px solid var(--border); background: var(--panel); }
+    .summary {
+      display: flex; gap: 10px; flex-wrap: wrap;
+      padding: 14px 24px; border-bottom: 1px solid var(--border);
+      color: var(--muted); font-size: 12px;
+    }
+    .summary span strong { color: var(--text); }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { text-align: left; padding: 10px 14px; border-bottom: 1px solid var(--border); }
+    th { color: var(--muted); font-weight: 500; font-size: 12px; position: sticky; top: 0; background: var(--bg); }
+    tbody tr { cursor: pointer; }
+    tbody tr:hover { background: var(--panel-2); }
+    tbody tr.selected { background: var(--panel-2); }
+    .type-tag { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+    .conf-bar { display: inline-block; height: 6px; border-radius: 3px; background: var(--accent); vertical-align: middle; }
+    .resolved-tag { color: var(--good); font-size: 11px; }
+    .open-tag { color: var(--warn); font-size: 11px; }
+    .detail-inner { padding: 22px 24px; }
+    .detail h2 { font-size: 15px; margin: 0 0 4px; }
+    .detail .empty { color: var(--muted); padding: 40px 24px; text-align: center; }
+    .field { margin-bottom: 14px; }
+    .field .label { color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+    .field .value { line-height: 1.5; }
+    .rec-box { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-top: 8px; }
+    .action-pill {
+      display: inline-block; padding: 4px 10px; border-radius: 6px;
+      background: rgba(79,156,249,0.15); color: var(--accent);
+      font-family: ui-monospace, monospace; font-size: 12px;
+    }
+    .txn-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .txn-card { background: var(--panel-2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; font-size: 12px; }
+    .txn-card .label { color: var(--muted); font-size: 11px; text-transform: uppercase; margin-bottom: 6px; }
+    .txn-card div { margin: 2px 0; }
+    .txn-card .k { color: var(--muted); }
+    .decide { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--border); }
+    .decide-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 10px; }
+    input, select {
+      background: var(--bg); color: var(--text);
+      border: 1px solid var(--border); border-radius: 6px; padding: 7px 9px; font-size: 13px;
+    }
+    .chips { color: var(--muted); font-size: 11px; }
+    .chips code { color: var(--accent); }
+    .resolved-banner { background: rgba(63,185,80,0.12); border: 1px solid rgba(63,185,80,0.3); color: var(--good); padding: 10px 12px; border-radius: 8px; margin-top: 16px; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <header>
+    <div>
+      <h1>Reconciliation Break Triage</h1>
+      <div class="sub">Ledger vs bank statement. AI explains, a human approves, every step is logged.</div>
+    </div>
+    <div class="controls">
+      <span id="auditBadge" class="badge"><span class="dot"></span><span>audit: unknown</span></span>
+      <button class="secondary" onclick="verifyAudit()">Verify audit</button>
+      <button id="reconcileBtn" onclick="runReconcile()">Run reconciliation</button>
+    </div>
+  </header>
+
+  <div class="summary" id="summary"><span>Run reconciliation to detect breaks.</span></div>
+
+  <div class="layout">
+    <div class="list">
+      <table>
+        <thead>
+          <tr><th>Break</th><th>Type</th><th>Reference</th><th>Ledger</th><th>Bank</th><th>Conf.</th><th>Status</th></tr>
+        </thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+    <div class="detail" id="detail">
+      <div class="empty">Select a break to see the AI explanation and recommendation.</div>
+    </div>
+  </div>
+
+  <script>
+    let selectedId = null;
+
+    async function api(path, opts) {
+      const res = await fetch(path, opts);
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.detail || res.statusText);
+      }
+      return res.json();
+    }
+
+    async function runReconcile() {
+      const btn = document.getElementById('reconcileBtn');
+      btn.disabled = true;
+      btn.textContent = 'Running...';
+      try {
+        const s = await api('/api/reconcile', { method: 'POST' });
+        renderSummary(s);
+        await loadBreaks();
+        await verifyAudit();
+      } catch (e) {
+        alert('Reconciliation failed: ' + e.message);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Run reconciliation';
+      }
+    }
+
+    function renderSummary(s) {
+      const types = Object.entries(s.by_type || {})
+        .map(([k, v]) => `<span><strong>${v}</strong> ${k}</span>`).join('');
+      document.getElementById('summary').innerHTML =
+        `<span><strong>${s.ledger_rows}</strong> ledger rows</span>` +
+        `<span><strong>${s.bank_rows}</strong> bank rows</span>` +
+        `<span><strong>${s.matched_pairs}</strong> matched</span>` +
+        `<span><strong>${s.break_count}</strong> breaks</span>` + types;
+    }
+
+    async function loadBreaks() {
+      const data = await api('/api/breaks');
+      const tbody = document.getElementById('rows');
+      tbody.innerHTML = '';
+      for (const b of data.breaks) {
+        const tr = document.createElement('tr');
+        tr.dataset.id = b.break_id;
+        if (b.break_id === selectedId) tr.classList.add('selected');
+        const width = Math.round((b.confidence || 0) * 40) + 4;
+        const status = b.resolved
+          ? '<span class="resolved-tag">resolved</span>'
+          : '<span class="open-tag">open</span>';
+        tr.innerHTML =
+          `<td>${b.break_id}</td>` +
+          `<td><span class="type-tag">${b.break_type}</span></td>` +
+          `<td>${b.reference || '-'}</td>` +
+          `<td>${b.ledger_amount || '-'}</td>` +
+          `<td>${b.bank_amount || '-'}</td>` +
+          `<td><span class="conf-bar" style="width:${width}px"></span> ${b.confidence}</td>` +
+          `<td>${status}</td>`;
+        tr.onclick = () => selectBreak(b.break_id);
+        tbody.appendChild(tr);
+      }
+    }
+
+    async function selectBreak(id) {
+      selectedId = id;
+      document.querySelectorAll('#rows tr').forEach(tr => {
+        tr.classList.toggle('selected', tr.dataset.id === id);
+      });
+      const detail = document.getElementById('detail');
+      detail.innerHTML = '<div class="empty">Generating AI recommendation...</div>';
+      try {
+        const b = await api('/api/breaks/' + id);
+        renderDetail(b);
+      } catch (e) {
+        detail.innerHTML = '<div class="empty">Error: ' + e.message + '</div>';
+      }
+    }
+
+    function txnCard(label, txn) {
+      if (!txn) return `<div class="txn-card"><div class="label">${label}</div><div class="k">none on this side</div></div>`;
+      return `<div class="txn-card"><div class="label">${label}</div>` +
+        `<div><span class="k">id</span> ${txn.txn_id}</div>` +
+        `<div><span class="k">ref</span> ${txn.reference}</div>` +
+        `<div><span class="k">amount</span> ${txn.amount} ${txn.currency}</div>` +
+        `<div><span class="k">date</span> ${txn.settlement_date}</div>` +
+        `<div><span class="k">cpty</span> ${txn.counterparty}</div></div>`;
+    }
+
+    function renderDetail(b) {
+      const rec = b.recommendation || {};
+      const decided = b.decision;
+      let decideHtml;
+      if (decided) {
+        decideHtml = `<div class="resolved-banner">Resolved by <strong>${decided.actor}</strong> ` +
+          `(${decided.decision}${decided.corrected_action ? ' to ' + decided.corrected_action : ''})` +
+          `${decided.notes ? ': ' + decided.notes : ''}</div>`;
+      } else {
+        decideHtml =
+          `<div class="decide">` +
+            `<div class="field"><div class="label">Human decision</div></div>` +
+            `<div class="decide-row">` +
+              `<input id="actor" placeholder="Your name" />` +
+              `<select id="correctedAction">` +
+                `<option value="">corrected action (if correcting)</option>` +
+                `<option value="post_adjustment">post_adjustment</option>` +
+                `<option value="await_settlement">await_settlement</option>` +
+                `<option value="escalate">escalate</option>` +
+                `<option value="write_off">write_off</option>` +
+                `<option value="manual_review">manual_review</option>` +
+              `</select>` +
+            `</div>` +
+            `<div class="decide-row">` +
+              `<input id="notes" placeholder="Notes (optional)" style="flex:1;min-width:200px" />` +
+            `</div>` +
+            `<div class="decide-row">` +
+              `<button onclick="decide('${b.break_id}','approve')">Approve</button>` +
+              `<button class="secondary" onclick="decide('${b.break_id}','reject')">Reject</button>` +
+              `<button class="secondary" onclick="decide('${b.break_id}','correct')">Correct</button>` +
+            `</div>` +
+          `</div>`;
+      }
+
+      document.getElementById('detail').innerHTML =
+        `<div class="detail-inner">` +
+          `<h2>${b.break_id} <span class="type-tag" style="color:var(--muted)">${b.break_type}</span></h2>` +
+          `<div class="field"><div class="value">${b.detail}</div></div>` +
+          `<div class="txn-grid">${txnCard('Ledger', b.ledger_txn)}${txnCard('Bank', b.bank_txn)}</div>` +
+          `<div class="rec-box">` +
+            `<div class="field"><div class="label">AI explanation</div><div class="value">${rec.explanation || ''}</div></div>` +
+            `<div class="field"><div class="label">Likely root cause</div><div class="value">${rec.likely_root_cause || ''}</div></div>` +
+            `<div class="field"><div class="label">Proposed resolution</div><div class="value">${rec.proposed_resolution || ''}</div></div>` +
+            `<div class="field"><div class="label">Recommended action</div><div class="value"><span class="action-pill">${rec.recommended_action || ''}</span></div></div>` +
+            `<div class="chips">grounded in: ${(rec.referenced_fields || []).map(f => '<code>' + f + '</code>').join(' ')}` +
+              `${rec.sop_reference ? ' &middot; cites ' + rec.sop_reference : ''}</div>` +
+          `</div>` +
+          decideHtml +
+        `</div>`;
+    }
+
+    async function decide(id, decision) {
+      const actor = (document.getElementById('actor').value || '').trim();
+      if (!actor) { alert('Enter your name to record a decision.'); return; }
+      const corrected = document.getElementById('correctedAction').value;
+      const notes = document.getElementById('notes').value;
+      const payload = { actor, decision, notes: notes || null };
+      if (decision === 'correct') {
+        if (!corrected) { alert('Pick a corrected action.'); return; }
+        payload.corrected_action = corrected;
+      }
+      try {
+        const b = await api('/api/breaks/' + id + '/decision', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload),
+        });
+        renderDetail(b);
+        await loadBreaks();
+        await verifyAudit();
+      } catch (e) {
+        alert('Decision failed: ' + e.message);
+      }
+    }
+
+    async function verifyAudit() {
+      const badge = document.getElementById('auditBadge');
+      try {
+        const v = await api('/api/audit/verify');
+        const cls = v.intact ? 'good' : 'bad';
+        const label = v.intact
+          ? `audit verified (${v.entry_count} entries)`
+          : `audit BROKEN at #${v.first_broken_index}`;
+        badge.innerHTML = `<span class="dot ${cls}"></span><span>${label}</span>`;
+      } catch (e) {
+        badge.innerHTML = `<span class="dot"></span><span>audit: error</span>`;
+      }
+    }
+
+    verifyAudit();
+  </script>
+</body>
+</html>

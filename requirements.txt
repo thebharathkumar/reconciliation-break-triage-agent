@@ -1,0 +1,8 @@
+# Install the project itself (editable) plus its runtime dependencies.
+-e .
+fastapi>=0.110
+uvicorn[standard]>=0.29
+pydantic>=2.6
+anthropic>=0.49
+langgraph>=0.2
+pytest>=8.0
