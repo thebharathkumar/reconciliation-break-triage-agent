@@ -1,0 +1,162 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="720" viewBox="0 0 1200 720" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif">
+  <defs>
+    <style>
+      .text { fill: #e6e9ee; }
+      .muted { fill: #9aa4b2; }
+      .accent { fill: #4f9cf9; }
+      .good { fill: #3fb950; }
+      .warn { fill: #d29922; }
+      .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    </style>
+  </defs>
+
+  <!-- background -->
+  <rect width="1200" height="720" fill="#0f1419"/>
+
+  <!-- header -->
+  <rect x="0" y="0" width="1200" height="64" fill="#0f1419"/>
+  <line x1="0" y1="64" x2="1200" y2="64" stroke="#2a313c"/>
+  <text x="24" y="30" class="text" font-size="17" font-weight="600">Reconciliation Break Triage</text>
+  <text x="24" y="48" class="muted" font-size="12">Ledger vs bank statement. AI explains, a human approves, every step is logged.</text>
+
+  <!-- audit badge -->
+  <rect x="724" y="18" width="210" height="28" rx="14" fill="#1e242e" stroke="#2a313c"/>
+  <circle cx="742" cy="32" r="4" fill="#3fb950"/>
+  <text x="754" y="36" class="good" font-size="12">audit verified (16 entries)</text>
+  <!-- verify button -->
+  <rect x="944" y="18" width="98" height="28" rx="6" fill="#1e242e" stroke="#2a313c"/>
+  <text x="993" y="36" class="text" font-size="13" text-anchor="middle">Verify audit</text>
+  <!-- run button -->
+  <rect x="1052" y="18" width="124" height="28" rx="6" fill="#4f9cf9"/>
+  <text x="1114" y="36" fill="#ffffff" font-size="13" font-weight="500" text-anchor="middle">Run reconciliation</text>
+
+  <!-- summary bar -->
+  <rect x="0" y="64" width="1200" height="36" fill="#0f1419"/>
+  <line x1="0" y1="100" x2="1200" y2="100" stroke="#2a313c"/>
+  <text x="24" y="87" font-size="12">
+    <tspan class="text" font-weight="600">142</tspan><tspan class="muted"> ledger rows   </tspan>
+    <tspan class="text" font-weight="600">141</tspan><tspan class="muted"> bank rows   </tspan>
+    <tspan class="text" font-weight="600">131</tspan><tspan class="muted"> matched   </tspan>
+    <tspan class="text" font-weight="600">14</tspan><tspan class="muted"> breaks   </tspan>
+    <tspan class="text" font-weight="600">3</tspan><tspan class="muted"> AMOUNT_MISMATCH   </tspan>
+    <tspan class="text" font-weight="600">3</tspan><tspan class="muted"> DATE_LAG   </tspan>
+    <tspan class="text" font-weight="600">3</tspan><tspan class="muted"> MISSING_IN_BANK</tspan>
+  </text>
+
+  <!-- divider between list and detail -->
+  <line x1="720" y1="100" x2="720" y2="720" stroke="#2a313c"/>
+  <rect x="720" y="100" width="480" height="620" fill="#171c24"/>
+
+  <!-- table header -->
+  <text x="24" y="128" class="muted" font-size="12">Break</text>
+  <text x="120" y="128" class="muted" font-size="12">Type</text>
+  <text x="300" y="128" class="muted" font-size="12">Reference</text>
+  <text x="430" y="128" class="muted" font-size="12">Ledger</text>
+  <text x="540" y="128" class="muted" font-size="12">Bank</text>
+  <text x="640" y="128" class="muted" font-size="12">Status</text>
+  <line x1="0" y1="140" x2="720" y2="140" stroke="#2a313c"/>
+
+  <!-- table rows -->
+  <!-- selected row highlight -->
+  <rect x="0" y="140" width="720" height="40" fill="#1e242e"/>
+
+  <!-- row 1 (selected) -->
+  <text x="24" y="165" class="text" font-size="13">BRK-0003</text>
+  <text x="120" y="165" class="accent mono" font-size="11">AMOUNT_MISMATCH</text>
+  <text x="300" y="165" class="text" font-size="13">INV-22000</text>
+  <text x="430" y="165" class="text" font-size="13">120450.18</text>
+  <text x="540" y="165" class="text" font-size="13">120427.55</text>
+  <text x="640" y="165" class="warn" font-size="11">open</text>
+  <line x1="0" y1="180" x2="720" y2="180" stroke="#2a313c"/>
+
+  <!-- row 2 -->
+  <text x="24" y="205" class="text" font-size="13">BRK-0006</text>
+  <text x="120" y="205" class="text mono" font-size="11">DATE_LAG</text>
+  <text x="300" y="205" class="text" font-size="13">INV-23000</text>
+  <text x="430" y="205" class="text" font-size="13">88300.00</text>
+  <text x="540" y="205" class="text" font-size="13">88300.00</text>
+  <text x="640" y="205" class="good" font-size="11">resolved</text>
+  <line x1="0" y1="220" x2="720" y2="220" stroke="#2a313c"/>
+
+  <!-- row 3 -->
+  <text x="24" y="245" class="text" font-size="13">BRK-0009</text>
+  <text x="120" y="245" class="text mono" font-size="11">MISSING_IN_BANK</text>
+  <text x="300" y="245" class="text" font-size="13">INV-20001</text>
+  <text x="430" y="245" class="text" font-size="13">45120.00</text>
+  <text x="540" y="245" class="muted" font-size="13">-</text>
+  <text x="640" y="245" class="warn" font-size="11">open</text>
+  <line x1="0" y1="260" x2="720" y2="260" stroke="#2a313c"/>
+
+  <!-- row 4 -->
+  <text x="24" y="285" class="text" font-size="13">BRK-0011</text>
+  <text x="120" y="285" class="text mono" font-size="11">MISSING_IN_LEDGER</text>
+  <text x="300" y="285" class="text" font-size="13">INV-21000</text>
+  <text x="430" y="285" class="muted" font-size="13">-</text>
+  <text x="540" y="285" class="text" font-size="13">73210.40</text>
+  <text x="640" y="285" class="warn" font-size="11">open</text>
+  <line x1="0" y1="300" x2="720" y2="300" stroke="#2a313c"/>
+
+  <!-- row 5 -->
+  <text x="24" y="325" class="text" font-size="13">BRK-0013</text>
+  <text x="120" y="325" class="text mono" font-size="11">DUPLICATE</text>
+  <text x="300" y="325" class="text" font-size="13">INV-24000</text>
+  <text x="430" y="325" class="text" font-size="13">9905.62</text>
+  <text x="540" y="325" class="muted" font-size="13">-</text>
+  <text x="640" y="325" class="warn" font-size="11">open</text>
+  <line x1="0" y1="340" x2="720" y2="340" stroke="#2a313c"/>
+
+  <!-- row 6 -->
+  <text x="24" y="365" class="text" font-size="13">BRK-0014</text>
+  <text x="120" y="365" class="text mono" font-size="11">CURRENCY_MISMATCH</text>
+  <text x="300" y="365" class="text" font-size="13">INV-25000</text>
+  <text x="430" y="365" class="text" font-size="13">61200.00</text>
+  <text x="540" y="365" class="text" font-size="13">61200.00</text>
+  <text x="640" y="365" class="warn" font-size="11">open</text>
+  <line x1="0" y1="380" x2="720" y2="380" stroke="#2a313c"/>
+
+  <!-- detail panel -->
+  <text x="744" y="132" class="text" font-size="15" font-weight="600">BRK-0003 <tspan class="muted mono" font-size="12">AMOUNT_MISMATCH</tspan></text>
+  <text x="744" y="158" class="text" font-size="12">Reference INV-22000 differs by 22.63 USD (ledger 120450.18 vs</text>
+  <text x="744" y="174" class="text" font-size="12">bank 120427.55), consistent with a fee or charge deduction.</text>
+
+  <!-- txn cards -->
+  <rect x="744" y="190" width="216" height="96" rx="8" fill="#1e242e" stroke="#2a313c"/>
+  <text x="758" y="210" class="muted" font-size="11">LEDGER</text>
+  <text x="758" y="230" font-size="12"><tspan class="muted">ref </tspan><tspan class="text">INV-22000</tspan></text>
+  <text x="758" y="248" font-size="12"><tspan class="muted">amount </tspan><tspan class="text">120450.18 USD</tspan></text>
+  <text x="758" y="266" font-size="12"><tspan class="muted">date </tspan><tspan class="text">2026-05-09</tspan></text>
+
+  <rect x="968" y="190" width="216" height="96" rx="8" fill="#1e242e" stroke="#2a313c"/>
+  <text x="982" y="210" class="muted" font-size="11">BANK</text>
+  <text x="982" y="230" font-size="12"><tspan class="muted">ref </tspan><tspan class="text">INV-22000</tspan></text>
+  <text x="982" y="248" font-size="12"><tspan class="muted">amount </tspan><tspan class="text">120427.55 USD</tspan></text>
+  <text x="982" y="266" font-size="12"><tspan class="muted">date </tspan><tspan class="text">2026-05-09</tspan></text>
+
+  <!-- recommendation box -->
+  <rect x="744" y="300" width="440" height="290" rx="8" fill="#1e242e" stroke="#2a313c"/>
+  <text x="760" y="324" class="muted" font-size="11">AI EXPLANATION</text>
+  <text x="760" y="344" class="text" font-size="12">The bank settled a net amount 22.63 USD below the ledger gross</text>
+  <text x="760" y="360" class="text" font-size="12">for reference INV-22000, with currency and date in agreement.</text>
+
+  <text x="760" y="386" class="muted" font-size="11">LIKELY ROOT CAUSE</text>
+  <text x="760" y="406" class="text" font-size="12">An intermediary or correspondent fee was deducted from the</text>
+  <text x="760" y="422" class="text" font-size="12">payment before it credited the nostro account.</text>
+
+  <text x="760" y="448" class="muted" font-size="11">PROPOSED RESOLUTION</text>
+  <text x="760" y="468" class="text" font-size="12">Post an adjustment for the 22.63 USD fee difference and</text>
+  <text x="760" y="484" class="text" font-size="12">reconcile the net against the ledger gross.</text>
+
+  <text x="760" y="510" class="muted" font-size="11">RECOMMENDED ACTION</text>
+  <rect x="760" y="520" width="120" height="24" rx="6" fill="#15314f"/>
+  <text x="772" y="536" class="accent mono" font-size="12">post_adjustment</text>
+
+  <text x="760" y="572" class="muted" font-size="11">grounded in: <tspan class="accent mono">ledger_txn.amount</tspan> <tspan class="accent mono">bank_txn.amount</tspan> · cites Policy 3</text>
+
+  <!-- decision buttons -->
+  <rect x="744" y="610" width="120" height="34" rx="6" fill="#4f9cf9"/>
+  <text x="804" y="632" fill="#ffffff" font-size="13" font-weight="500" text-anchor="middle">Approve</text>
+  <rect x="876" y="610" width="100" height="34" rx="6" fill="#1e242e" stroke="#2a313c"/>
+  <text x="926" y="632" class="text" font-size="13" text-anchor="middle">Reject</text>
+  <rect x="988" y="610" width="100" height="34" rx="6" fill="#1e242e" stroke="#2a313c"/>
+  <text x="1038" y="632" class="text" font-size="13" text-anchor="middle">Correct</text>
+</svg>
