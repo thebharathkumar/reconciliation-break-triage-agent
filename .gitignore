@@ -1,0 +1,15 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+build/
+dist/
+.pytest_cache/
+.venv/
+venv/
+
+# Generated seed data and runtime artifacts
+data/ledger.csv
+data/bank.csv
+audit_log.jsonl

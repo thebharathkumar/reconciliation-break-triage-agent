@@ -1,0 +1,21 @@
+# Render deployment for the reconciliation break triage agent.
+# Deploys a single web service. The dashboard is served at the root URL.
+services:
+  - type: web
+    name: recon-triage
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn recon_triage.app:app --host 0.0.0.0 --port $PORT
+    envVars:
+      # Secret that signs the audit chain. Set a strong value in the dashboard.
+      - key: AUDIT_SECRET
+        sync: false
+      # Optional. If set, the agent uses Claude; if absent, it uses the
+      # deterministic rule-based fallback so the demo still works.
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL
+        value: claude-opus-4-8
+      - key: PYTHON_VERSION
+        value: "3.11"
