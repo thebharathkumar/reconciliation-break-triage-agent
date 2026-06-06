@@ -11,6 +11,12 @@ HMAC-chained audit log.
 It is small enough to read in one sitting and runs with no API key (a rule-based
 fallback stands in for the agent), so the demo works offline.
 
+![Reconciliation triage dashboard: breaks table on the left, the selected break's grounded AI recommendation and approve/reject/correct controls on the right, with a live audit-verified badge in the header.](docs/dashboard-preview.svg)
+
+> The image above is a UI preview of `web/index.html` rendered with real
+> reconciliation data. A separate, drop-in pitch narrative lives in
+> [`docs/PITCH.md`](docs/PITCH.md).
+
 ## The thirty-second pitch
 
 1. **Deterministic matcher, not a black box.** A pure-logic pass reconciles the
