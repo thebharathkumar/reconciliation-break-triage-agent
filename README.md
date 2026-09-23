@@ -1,5 +1,12 @@
 # Reconciliation Break Triage Agent
 
+<!-- brag:start -->
+<p align="center">
+  <a href="https://github.com/thebharathkumar/reconciliation-break-triage-agent/blob/HEAD/docs/brag/reconciliation-break-triage-agent.mp4"><img src="https://raw.githubusercontent.com/thebharathkumar/reconciliation-break-triage-agent/HEAD/docs/brag/reconciliation-break-triage-agent.gif" alt="reconciliation-break-triage-agent: 15-second technical brief" width="100%"></a>
+</p>
+<p align="center"><sub>15-second technical brief. <a href="https://github.com/thebharathkumar/reconciliation-break-triage-agent/blob/HEAD/docs/brag/reconciliation-break-triage-agent.mp4">Full MP4 with sound</a> &middot; more at <a href="https://thebharath.co">thebharath.co</a></sub></p>
+<!-- brag:end -->
+
 **Clearing and settlement operations have to explain and resolve every break
 between their internal ledger and the bank statement, and prove to a regulator
 that the resolution trail was not altered after the fact.** This system detects
